@@ -3,12 +3,14 @@
 #include <iostream>
 #include <vector>
 
-#include "../../morph/morph/src/ext/lib/fontcast/src/vec2d.h"
-
 struct GLFWwindow;
 namespace glfw_wrapper
 {
-    using vec2f = vec2d<float_t>;
+    struct vec2f
+    {
+        float_t x;
+        float_t y;
+    };
 
     struct mouse_button_state
     {
@@ -23,7 +25,7 @@ namespace glfw_wrapper
 
 	struct Window {
         Window() = default;
-        static Window make_window(uint w, uint h, bool passThrough, bool opaque);
+        static Window make_window(uint w, uint h, bool passThrough, bool opaque, std::string title);
 
         bool should_close();
         void poll_events();

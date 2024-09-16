@@ -61,7 +61,7 @@ namespace glfw_wrapper
             glfwGetCursorPos(impl(), & x, & y);
             
             lock_guard<mutex> guard(m_mouse_button);
-            m_current_mouse_button.m_mouse = vec2d<float_t> { float_t(x), float_t(y) };
+            m_current_mouse_button.m_mouse = vec2f { float_t(x), float_t(y) };
         }
 
         void get_window_pos(int & left, int & top)
@@ -205,7 +205,7 @@ namespace glfw_wrapper
         mutex m_keyboard_state;
     };
     
-    Window Window::make_window(uint w, uint h, bool passThrough, bool opaque)
+    Window Window::make_window(uint w, uint h, bool passThrough, bool opaque, std::string title)
     {
         if (!glfw_initialized) {
             return Window { nullptr };
@@ -226,8 +226,7 @@ namespace glfw_wrapper
         glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
     
-        const auto name = string("Morph");//_" + to_string(w) + "x" + to_string(h);
-        
+        const auto name = string(title);
         GLFWwindow * raw_ptr = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
         return make_shared<Window::Pimpl>(unique_ptr<GLFWwindow, decltype(& glfwDestroyWindow)>(raw_ptr, glfwDestroyWindow));
     }
