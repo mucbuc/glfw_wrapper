@@ -219,9 +219,7 @@ Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque
     } else {
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
     }
-#ifndef __EMSCRIPTEN__
     glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, passThrough ? GLFW_TRUE : GLFW_FALSE);
-#endif
 
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
