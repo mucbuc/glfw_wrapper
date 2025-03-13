@@ -63,6 +63,12 @@ struct Window::Pimpl {
         m_current_mouse_button.m_mouse = vec2f { float_t(x), float_t(y) };
     }
 
+    void set_mouse_move(std::function<void(double x, double y)> cb)
+    {
+        m_on_mouse_move = cb;
+        glfwSetCursorPosCallback(impl(), &handle_mouse_move);
+    }
+
     void get_window_pos(int& left, int& top)
     {
         glfwGetWindowPos(impl(), &left, &top);
@@ -178,6 +184,13 @@ struct Window::Pimpl {
         }
     }
 
+    static void handle_mouse_move(GLFWwindow* window, double xpos, double ypos)
+    {
+        auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
+
+        pimpl->m_on_mouse_move(xpos, ypos);
+    }
+
     unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> m_window;
 
     mouse_button_state m_current_mouse_button = { false, { 0, 0 } };
@@ -188,6 +201,8 @@ struct Window::Pimpl {
 
     mutex m_mouse_button;
     mutex m_keyboard_state;
+
+    std::function<void(double, double)> m_on_mouse_move;
 };
 
 Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title)
@@ -237,6 +252,11 @@ void Window::setFrameVisible(bool value)
 void Window::get_mouse_pos(double& x, double& y)
 {
     m_pimpl->get_mouse_pos(x, y);
+}
+
+void Window::set_mouse_move(std::function<void(double, double)> cb)
+{
+    m_pimpl->set_mouse_move(cb);
 }
 
 void Window::get_window_pos(int& left, int& top)

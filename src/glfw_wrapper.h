@@ -27,6 +27,8 @@ struct Window {
     void poll_events();
     void get_mouse_pos(double& x, double& y);
 
+    void set_mouse_move(std::function<void(double, double)>);
+
     mouse_button_state current_mouse_button_state();
     mouse_button_state previous_mouse_button_state();
 
