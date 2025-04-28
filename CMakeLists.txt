@@ -13,3 +13,9 @@ target_sources(glfw_wrapper PRIVATE src/glfw_wrapper.cpp)
 target_link_libraries(glfw_wrapper PUBLIC
     glfw
 )
+
+if(PROJECT_IS_TOP_LEVEL) 
+include_directories(PUBLIC SYSTEM test/lib)
+else()
+include_directories(PUBLIC SYSTEM ..)
+endif()

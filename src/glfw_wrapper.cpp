@@ -1,5 +1,7 @@
 #include "glfw_wrapper.h"
 
+#include <asserter/src/asserter.hpp>
+
 #include <GLFW/glfw3.h>
 #include <algorithm>
 
@@ -43,6 +45,9 @@ struct Window::Pimpl {
 
         glfwSetMouseButtonCallback(m_window.get(), &mouse_button_callback);
         glfwSetKeyCallback(m_window.get(), &key_callback);
+        glfwSetCharCallback(m_window.get(), &char_callback);
+
+        glfwSetWindowSizeCallback(m_window.get(), &window_size_callback); 
     }
 
     bool should_close()
@@ -69,6 +74,21 @@ struct Window::Pimpl {
         glfwSetCursorPosCallback(impl(), &handle_mouse_move);
     }
 
+    void set_window_resize(std::function<void(double, double)> cb)
+    {
+        m_on_window_resize = cb;
+    }
+
+    void set_window_scroll(std::function<void(double, double)> cb)
+    {
+        m_on_scroll = cb;
+    }    
+
+    void set_key_press(std::function<void(string)> cb)
+    {
+        m_on_key_press = cb;
+    }        
+
     void get_window_pos(int& left, int& top)
     {
         glfwGetWindowPos(impl(), &left, &top);
@@ -77,6 +97,11 @@ struct Window::Pimpl {
     void get_window_size(int& width, int& height)
     {
         glfwGetWindowSize(impl(), &width, &height);
+    }
+
+    void get_framebuffer_size(int & width, int & height)
+    {
+        glfwGetFramebufferSize(impl(), &width, &height);
     }
 
     void set_window_pos(int left, int top)
@@ -129,7 +154,7 @@ struct Window::Pimpl {
     {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
-        // ASSERT(pimpl);
+        ASSERT(pimpl);
 
         lock_guard<mutex> guard(pimpl->m_mouse_button);
 
@@ -154,32 +179,40 @@ struct Window::Pimpl {
         }
     }
 
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    static void char_callback(GLFWwindow* window, unsigned int codepoint)
     {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
-        if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z) {
-            lock_guard<mutex> guard(pimpl->m_keyboard_state);
 
-            const auto target = string(1, 'a' + key - GLFW_KEY_A);
+        std::cout << "char_callback: " << codepoint << std::endl;
+    }
 
-            if (action == GLFW_PRESS) {
-                pimpl->m_current_keyboard_state.m_pressed.push_back(target);
-            } else if (action == GLFW_RELEASE) {
-                const auto i = find(pimpl->m_current_keyboard_state.m_pressed.begin(), pimpl->m_current_keyboard_state.m_pressed.end(), target);
-                if (i != pimpl->m_current_keyboard_state.m_pressed.end()) {
-                    pimpl->m_current_keyboard_state.m_pressed.erase(i);
-                }
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+// #define GLFW_KEY_LEFT_SHIFT         340
+// #define GLFW_KEY_RIGHT_SHIFT        344
+
+        std::cout << "key pressed: " << key << " " << scancode << std::endl;
+
+        auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
+        if (action == GLFW_PRESS) {
+            if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z) {
+                pimpl->m_on_key_press(string(1, 'a' + key - GLFW_KEY_A));
             }
-        } else if (key == GLFW_KEY_ESCAPE) {
-            lock_guard<mutex> guard(pimpl->m_keyboard_state);
-            if (action == GLFW_PRESS) {
-                pimpl->m_current_keyboard_state.m_pressed.push_back("ESCAPE");
-            } else if (action == GLFW_RELEASE) {
-                const auto i = find(pimpl->m_current_keyboard_state.m_pressed.begin(), pimpl->m_current_keyboard_state.m_pressed.end(), "ESCAPE");
-                if (i != pimpl->m_current_keyboard_state.m_pressed.end()) {
-                    pimpl->m_current_keyboard_state.m_pressed.erase(i);
-                }
+            else if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+            {
+                pimpl->m_on_key_press(string(1, '0' + key - GLFW_KEY_0));
+            }
+            else {
+                switch (key) {
+                    case GLFW_KEY_ENTER:
+                        pimpl->m_on_key_press("Enter"); 
+                        break;
+                
+                    case GLFW_KEY_ESCAPE:
+                        pimpl->m_on_key_press("Escape");
+                        break;
+                };
             }
         }
     }
@@ -188,8 +221,19 @@ struct Window::Pimpl {
     {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
+        ASSERT(pimpl->m_on_mouse_move);
+
         pimpl->m_on_mouse_move(xpos, ypos);
     }
+
+    static void window_size_callback(GLFWwindow* window, int width, int height)
+    {
+        auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
+
+        ASSERT(pimpl->m_on_window_resize);
+        pimpl->m_on_window_resize(width, height);
+    }
+
 
     unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> m_window;
 
@@ -203,6 +247,9 @@ struct Window::Pimpl {
     mutex m_keyboard_state;
 
     std::function<void(double, double)> m_on_mouse_move;
+    std::function<void(double, double)> m_on_window_resize;
+    std::function<void(double, double)> m_on_scroll;
+    std::function<void(string)> m_on_key_press;
 };
 
 Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title)
@@ -257,6 +304,21 @@ void Window::set_mouse_move(std::function<void(double, double)> cb)
     m_pimpl->set_mouse_move(cb);
 }
 
+void Window::set_window_resize(std::function<void(double, double)> cb)
+{
+    m_pimpl->set_window_resize(cb);
+}    
+
+void Window::set_window_scroll(std::function<void(double, double)> cb)
+{
+    m_pimpl->set_window_scroll(cb);
+}    
+
+void Window::set_key_press(std::function<void(std::string)> cb)
+{
+    m_pimpl->set_key_press(cb);
+}     
+
 void Window::get_window_pos(int& left, int& top)
 {
     m_pimpl->get_window_pos(left, top);
@@ -265,6 +327,11 @@ void Window::get_window_pos(int& left, int& top)
 void Window::get_window_size(int& width, int& height)
 {
     m_pimpl->get_window_size(width, height);
+}
+
+void Window::get_framebuffer_size(int& width, int& height)
+{
+    m_pimpl->get_framebuffer_size(width, height);
 }
 
 void Window::set_window_pos(int left, int top)
@@ -305,6 +372,11 @@ void Window::update_previous_mouse_pos()
 void Window::update_keyboard_state()
 {
     m_pimpl->update_keyboard_state();
+}
+
+Window::operator bool() const
+{
+    return bool(m_pimpl); 
 }
 
 } // glfw_wrapper

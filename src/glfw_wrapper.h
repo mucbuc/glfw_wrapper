@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 struct GLFWwindow;
 namespace glfw_wrapper {
@@ -28,6 +29,9 @@ struct Window {
     void get_mouse_pos(double& x, double& y);
 
     void set_mouse_move(std::function<void(double, double)>);
+    void set_window_resize(std::function<void(double, double)>);
+    void set_window_scroll(std::function<void(double, double)>);
+    void set_key_press(std::function<void(std::string)>); 
 
     mouse_button_state current_mouse_button_state();
     mouse_button_state previous_mouse_button_state();
@@ -38,6 +42,7 @@ struct Window {
     void get_window_pos(int& left, int& top);
     void set_window_pos(int left, int top);
     void get_window_size(int& width, int& height);
+    void get_framebuffer_size(int& width, int& height);
 
     GLFWwindow* impl() const;
     ~Window();
@@ -45,6 +50,8 @@ struct Window {
 
     void update_previous_mouse_pos();
     void update_keyboard_state();
+
+    operator bool() const;
 
 private:
     struct Pimpl;
