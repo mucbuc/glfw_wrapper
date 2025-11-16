@@ -1,6 +1,6 @@
 #include "glfw_wrapper.h"
 
-#include <asserter/src/asserter.hpp>
+#include <lib/asserter/src/asserter.hpp>
 
 #include <GLFW/glfw3.h>
 #include <algorithm>
