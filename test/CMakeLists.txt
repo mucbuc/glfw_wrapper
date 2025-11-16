@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.27)
 
 project(Example)
 
+enable_testing()
+
 add_executable(Example src/example.cpp)
 
 set_target_properties(Example PROPERTIES
@@ -19,3 +21,8 @@ target_link_libraries(Example PRIVATE
 )
 
 target_include_directories(Example SYSTEM PUBLIC ${CMAKE_SOURCE_DIR})
+
+add_test(
+  NAME basic_test
+  COMMAND Example
+)
