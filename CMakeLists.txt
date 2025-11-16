@@ -1,21 +1,23 @@
-set(CMAKE_CXX_STANDARD 20)
-set(DAWN_FETCH_DEPENDENCIES ON)
-#set(CMAKE_XCODE_ATTRIBUTE_ARCHS "$(ARCHS_STANDARD)")
-#set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
+cmake_minimum_required(VERSION 3.27)
 
-project(glfw_wrapper_lib)
-#I think glfw is included in dawn now
-#add_subdirectory("lib/glfw" EXCLUDE_FROM_ALL)
+project(glfw_wrapper)
 
 add_library(glfw_wrapper STATIC src/glfw_wrapper.h)
-target_sources(glfw_wrapper PRIVATE src/glfw_wrapper.cpp)
 
-target_link_libraries(glfw_wrapper PUBLIC
+set_target_properties(glfw_wrapper PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    COMPILE_WARNING_AS_ERROR ON
+)
+
+target_sources(glfw_wrapper PRIVATE 
+    src/glfw_wrapper.cpp)
+
+add_subdirectory(lib/glfw)
+
+target_link_libraries(glfw_wrapper PRIVATE
     glfw
 )
 
-if(PROJECT_IS_TOP_LEVEL) 
-include_directories(PUBLIC SYSTEM test/lib)
-else()
-include_directories(PUBLIC SYSTEM ..)
-endif()
+target_include_directories(glfw_wrapper SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/../lib/glfw/include)

@@ -65,7 +65,7 @@ struct Window::Pimpl {
         glfwGetCursorPos(impl(), &x, &y);
 
         lock_guard<mutex> guard(m_mouse_button);
-        m_current_mouse_button.m_mouse = vec2f { float_t(x), float_t(y) };
+        m_current_mouse_button.m_mouse = vec2f { float(x), float(y) };
     }
 
     void set_mouse_move(std::function<void(double x, double y)> cb)
