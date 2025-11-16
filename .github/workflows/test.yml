@@ -24,11 +24,5 @@ jobs:
       - name: Test fails
         run: |
           cd test
-          if ctest --test-dir build; then
-            echo "ERROR: Test should have failed but passed"
-            exit 1
-          else
-            echo "Test failed as expected"
-            exit 0
-          fi
+          ctest --test-dir build
 
