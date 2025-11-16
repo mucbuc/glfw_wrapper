@@ -6,8 +6,8 @@
 struct GLFWwindow;
 namespace glfw_wrapper {
 struct vec2f {
-    float_t x;
-    float_t y;
+    float x;
+    float y;
 };
 
 struct mouse_button_state {
