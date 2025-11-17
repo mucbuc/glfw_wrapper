@@ -82,11 +82,6 @@ struct Window::Pimpl {
         m_mouse_batch->invoke(m_current_mouse_button, m_previous_mouse_button);
     }
 
-    void set_mouse_move(std::function<void(double x, double y)> cb)
-    {
-        ASSERT(false);    
-    }
-
     void set_window_resize(std::function<void(double, double)> cb)
     {
         m_on_window_resize = cb;
@@ -299,11 +294,6 @@ void Window::setFrameVisible(bool value)
 void Window::invoke_mouse_event()
 {
     m_pimpl->invoke_mouse_event();
-}
-
-void Window::set_mouse_move(std::function<void(double, double)> cb)
-{
-    m_pimpl->set_mouse_move(cb);
 }
 
 void Window::set_window_resize(std::function<void(double, double)> cb)

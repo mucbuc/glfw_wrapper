@@ -33,7 +33,6 @@ struct Window {
 
     void invoke_mouse_event();
 
-    void set_mouse_move(std::function<void(double, double)>);
     void set_window_resize(std::function<void(double, double)>);
     void set_window_scroll(std::function<void(double, double)>);
     void set_key_press(std::function<void(std::string)>); 
