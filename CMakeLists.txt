@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27)
 
 project(glfw_wrapper)
 
-add_library(glfw_wrapper STATIC src/glfw_wrapper.h)
+add_library(glfw_wrapper STATIC src/glfw_wrapper.hpp)
 
 set_target_properties(glfw_wrapper PROPERTIES
     CXX_STANDARD 20
@@ -20,4 +20,8 @@ target_link_libraries(glfw_wrapper PRIVATE
     glfw
 )
 
-target_include_directories(glfw_wrapper SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/../lib/glfw/include)
+target_include_directories(glfw_wrapper SYSTEM PUBLIC       
+    ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_SOURCE_DIR}
+)
