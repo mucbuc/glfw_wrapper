@@ -30,3 +30,11 @@ add_test(
   NAME basic_test
   COMMAND Example
 )
+
+if (EMSCRIPTEN)
+    set_target_properties(Example PROPERTIES SUFFIX ".html")
+    target_link_options(Example PRIVATE 
+        -sUSE_GLFW=3
+        --emrun
+    )
+endif()

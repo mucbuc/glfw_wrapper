@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include <lib/dynamo/src/interface.hpp>
 
@@ -56,5 +57,6 @@ private:
 bool init_glfw(std::ostream&);
 void poll_events();
 void terminate();
+void start_main_loop(std::function<void(std::function<void()>)>);
 
 }

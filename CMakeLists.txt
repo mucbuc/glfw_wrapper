@@ -14,7 +14,7 @@ set_target_properties(glfw_wrapper PROPERTIES
 target_sources(glfw_wrapper PRIVATE 
     src/glfw_wrapper.cpp)
 
-if (!EMSCRIPTEN)
+if (NOT EMSCRIPTEN)
 add_subdirectory(lib/glfw)
 
 target_link_libraries(glfw_wrapper PRIVATE

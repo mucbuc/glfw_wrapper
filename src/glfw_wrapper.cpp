@@ -6,6 +6,10 @@
 #include <GLFW/glfw3.h>
 #include <algorithm>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif 
+
 using namespace std;
 
 namespace {
@@ -35,6 +39,38 @@ void poll_events()
 {
     glfwPollEvents();
 }
+
+static std::function<void(std::function<void()>)> g_logic;
+static bool g_exit = false;
+static void main_loop_logic()
+{
+    
+    poll_events();
+    g_logic([](){
+        g_exit = true; 
+    });
+
+#ifdef __EMSCRIPTEN__
+    if (g_exit) {
+        emscripten_cancel_main_loop();
+    }
+#endif 
+}
+
+void start_main_loop(std::function<void(std::function<void()>)> logic)
+{
+    g_logic = logic;
+
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(main_loop_logic, 0, 1); // Call main_loop_update at ~60 FPS
+#else
+    while (!g_exit)
+    {
+        main_loop_logic();
+    }
+#endif 
+}
+
 
 struct Window::Pimpl {
     template <class T>
