@@ -15,9 +15,13 @@ set_target_properties(Example PROPERTIES
 
 add_subdirectory(lib/glfw_wrapper)
 add_subdirectory(lib/asserter)
+add_subdirectory(lib/dynamo)
+add_subdirectory(lib/circuit)
 
 target_link_libraries(Example PRIVATE 
   glfw_wrapper
+  dynamo
+  circuit
 )
 
 target_include_directories(Example SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR})

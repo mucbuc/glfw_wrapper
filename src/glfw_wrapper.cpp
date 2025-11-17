@@ -1,6 +1,8 @@
 #include "glfw_wrapper.h"
 
 #include <lib/asserter/src/asserter.hpp>
+#include <lib/dynamo/src/impl/batch.hpp>
+
 
 #include <GLFW/glfw3.h>
 #include <algorithm>
@@ -43,11 +45,21 @@ struct Window::Pimpl {
     {
         glfwSetWindowUserPointer(m_window.get(), this);
 
+        double x;
+        double y; 
+        glfwGetCursorPos(m_window.get(), &x, &y);
+        m_current_mouse_button.m_position = vec2f { float(x), float(y) };
+        m_previous_mouse_button.m_position = m_current_mouse_button.m_position;
+
         glfwSetMouseButtonCallback(m_window.get(), &mouse_button_callback);
+        glfwSetCursorPosCallback(m_window.get(), &handle_mouse_move);
+
         glfwSetKeyCallback(m_window.get(), &key_callback);
         glfwSetCharCallback(m_window.get(), &char_callback);
 
         glfwSetWindowSizeCallback(m_window.get(), &window_size_callback); 
+    
+        m_mouse_batch = om636::control::make_queue<mouse_button_state, mouse_button_state>();
     }
 
     bool should_close()
@@ -55,23 +67,24 @@ struct Window::Pimpl {
         return glfwWindowShouldClose(impl());
     }
 
+    Window::mouse_event_batch mouse_events()
+    {
+        return m_mouse_batch;
+    }
+
     void setFrameVisible(bool value)
     {
         glfwWindowHint(GLFW_DECORATED, value ? GLFW_TRUE : GLFW_FALSE);
     }
 
-    void get_mouse_pos(double& x, double& y)
+    void invoke_mouse_event()
     {
-        glfwGetCursorPos(impl(), &x, &y);
-
-        lock_guard<mutex> guard(m_mouse_button);
-        m_current_mouse_button.m_mouse = vec2f { float(x), float(y) };
+        m_mouse_batch->invoke(m_current_mouse_button, m_previous_mouse_button);
     }
 
     void set_mouse_move(std::function<void(double x, double y)> cb)
     {
-        m_on_mouse_move = cb;
-        glfwSetCursorPosCallback(impl(), &handle_mouse_move);
+        ASSERT(false);    
     }
 
     void set_window_resize(std::function<void(double, double)> cb)
@@ -114,18 +127,6 @@ struct Window::Pimpl {
         return m_window.get();
     }
 
-    mouse_button_state current_mouse_button_state()
-    {
-        lock_guard<mutex> guard(m_mouse_button);
-        return m_current_mouse_button;
-    }
-
-    mouse_button_state previous_mouse_button_state()
-    {
-        lock_guard<mutex> guard(m_mouse_button);
-        return m_previous_mouse_button;
-    }
-
     keyboard_state current_keyboard_state()
     {
         lock_guard<mutex> guard(m_keyboard_state);
@@ -136,12 +137,6 @@ struct Window::Pimpl {
     {
         lock_guard<mutex> guard(m_keyboard_state);
         return m_previous_keyboard_state;
-    }
-
-    void update_previous_mouse_pos()
-    {
-        lock_guard<mutex> guard(m_mouse_button);
-        m_previous_mouse_button = m_current_mouse_button;
     }
 
     void update_keyboard_state()
@@ -155,8 +150,6 @@ struct Window::Pimpl {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
         ASSERT(pimpl);
-
-        lock_guard<mutex> guard(pimpl->m_mouse_button);
 
         if (action == GLFW_PRESS) {
             //                if (button == GLFW_MOUSE_BUTTON_RIGHT)
@@ -177,6 +170,9 @@ struct Window::Pimpl {
                 pimpl->m_current_mouse_button.m_left_button_down = false;
             }
         }
+
+        pimpl->m_mouse_batch->invoke(pimpl->m_current_mouse_button, pimpl->m_previous_mouse_button);
+        pimpl->m_previous_mouse_button = pimpl->m_current_mouse_button;
     }
 
     static void char_callback(GLFWwindow* window, unsigned int codepoint)
@@ -221,9 +217,11 @@ struct Window::Pimpl {
     {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
-        ASSERT(pimpl->m_on_mouse_move);
-
-        pimpl->m_on_mouse_move(xpos, ypos);
+        pimpl->m_current_mouse_button.m_position.x = xpos;
+        pimpl->m_current_mouse_button.m_position.y = ypos;
+        
+        pimpl->m_mouse_batch->invoke(pimpl->m_current_mouse_button, pimpl->m_previous_mouse_button);
+        pimpl->m_previous_mouse_button = pimpl->m_current_mouse_button;
     }
 
     static void window_size_callback(GLFWwindow* window, int width, int height)
@@ -243,13 +241,12 @@ struct Window::Pimpl {
     keyboard_state m_current_keyboard_state;
     keyboard_state m_previous_keyboard_state;
 
-    mutex m_mouse_button;
     mutex m_keyboard_state;
 
-    std::function<void(double, double)> m_on_mouse_move;
     std::function<void(double, double)> m_on_window_resize;
     std::function<void(double, double)> m_on_scroll;
     std::function<void(string)> m_on_key_press;
+    Window::mouse_event_batch m_mouse_batch;
 };
 
 Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title)
@@ -289,14 +286,19 @@ bool Window::should_close()
     return glfwWindowShouldClose(impl());
 }
 
+auto Window::mouse_events() -> mouse_event_batch
+{
+    return m_pimpl->mouse_events();
+}
+
 void Window::setFrameVisible(bool value)
 {
     m_pimpl->setFrameVisible(value);
 }
 
-void Window::get_mouse_pos(double& x, double& y)
+void Window::invoke_mouse_event()
 {
-    m_pimpl->get_mouse_pos(x, y);
+    m_pimpl->invoke_mouse_event();
 }
 
 void Window::set_mouse_move(std::function<void(double, double)> cb)
@@ -344,16 +346,6 @@ GLFWwindow* Window::impl() const
     return m_pimpl->m_window.get();
 }
 
-mouse_button_state Window::current_mouse_button_state()
-{
-    return m_pimpl->current_mouse_button_state();
-}
-
-mouse_button_state Window::previous_mouse_button_state()
-{
-    return m_pimpl->previous_mouse_button_state();
-}
-
 keyboard_state Window::curent_keyboard_state()
 {
     return m_pimpl->current_keyboard_state();
@@ -362,11 +354,6 @@ keyboard_state Window::curent_keyboard_state()
 keyboard_state Window::previous_keyboard_state()
 {
     return m_pimpl->previous_keyboard_state();
-}
-
-void Window::update_previous_mouse_pos()
-{
-    m_pimpl->update_previous_mouse_pos();
 }
 
 void Window::update_keyboard_state()

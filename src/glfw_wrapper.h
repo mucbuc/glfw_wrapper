@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include <lib/ohm/src/interface.hpp>
+
 struct GLFWwindow;
 namespace glfw_wrapper {
 struct vec2f {
@@ -13,7 +15,7 @@ struct vec2f {
 
 struct mouse_button_state {
     bool m_left_button_down; // mac mouse doesn't have right button, better for touch screen anyway
-    vec2f m_mouse;
+    vec2f m_position;
 };
 
 struct keyboard_state {
@@ -25,15 +27,16 @@ struct Window {
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
 
     bool should_close();
-    void get_mouse_pos(double& x, double& y);
+
+    using mouse_event_batch = std::shared_ptr<om636::control::Batch<mouse_button_state, mouse_button_state>>;
+    mouse_event_batch mouse_events();
+
+    void invoke_mouse_event();
 
     void set_mouse_move(std::function<void(double, double)>);
     void set_window_resize(std::function<void(double, double)>);
     void set_window_scroll(std::function<void(double, double)>);
     void set_key_press(std::function<void(std::string)>); 
-
-    mouse_button_state current_mouse_button_state();
-    mouse_button_state previous_mouse_button_state();
 
     keyboard_state curent_keyboard_state();
     keyboard_state previous_keyboard_state();
@@ -47,7 +50,6 @@ struct Window {
     ~Window();
     void setFrameVisible(bool value);
 
-    void update_previous_mouse_pos();
     void update_keyboard_state();
 
     operator bool() const;

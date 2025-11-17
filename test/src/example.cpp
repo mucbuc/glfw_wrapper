@@ -13,11 +13,26 @@ int main()
 
     ASSERT(window.impl());
 
-/*
-        while (!window.should_close()) {
-            poll_events();
-        }
-*/ 
+    bool mouse_event_invoked = false;
+    auto l = window.mouse_events()->hook([& mouse_event_invoked](auto current, auto previous){
+    
+        mouse_event_invoked = true; 
+
+        // if (!current.m_left_button_down && previous.m_left_button_down)
+        // {
+        //     std::cout << "touch up" << std::endl;
+        // }
+        
+        // std::cout << current.m_position.x << " " << current.m_position.y << std::endl;
+    }); 
+
+    ASSERT(!mouse_event_invoked);
+    window.invoke_mouse_event();
+    ASSERT(mouse_event_invoked);
+
+    //while (!window.should_close()) {
+    //    poll_events();
+    //}
 
     return 0;
 }
