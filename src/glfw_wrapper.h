@@ -18,10 +18,6 @@ struct touch_state {
     vec2f m_position;
 };
 
-struct keyboard_state {
-    std::vector<std::string> m_pressed;
-};
-
 struct Window {
     Window() = default;
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
@@ -34,12 +30,11 @@ struct Window {
     // this is to retrieve current touch position before touch events have been emitted
     void emit_touch_event();
 
+    using key_emitter_type = std::shared_ptr<om636::control::Batch<std::string, std::string>>;
+    key_emitter_type key_emitter();
+
     void set_window_resize(std::function<void(double, double)>);
     void set_window_scroll(std::function<void(double, double)>);
-    void set_key_press(std::function<void(std::string)>); 
-
-    keyboard_state curent_keyboard_state();
-    keyboard_state previous_keyboard_state();
 
     void get_window_pos(int& left, int& top);
     void set_window_pos(int left, int top);
@@ -49,8 +44,6 @@ struct Window {
     GLFWwindow* impl() const;
     ~Window();
     void setFrameVisible(bool value);
-
-    void update_keyboard_state();
 
     operator bool() const;
 

@@ -14,25 +14,16 @@ int main()
     ASSERT(window.impl());
 
     bool touch_event_emitted = false;
-    auto l = window.touch_emitter()->hook([& touch_event_emitted](auto current, auto previous){
-    
+    auto touch_listener = window.touch_emitter()->hook([& touch_event_emitted](auto current, auto previous){
         touch_event_emitted = true; 
-
-        // if (!current.m_is_down && previous.m_is_down)
-        // {
-        //     std::cout << "touch up" << std::endl;
-        // }
-        
-        // std::cout << current.m_position.x << " " << current.m_position.y << std::endl;
     }); 
 
     ASSERT(!touch_event_emitted);
     window.emit_touch_event();
     ASSERT(touch_event_emitted);
 
-    //while (!window.should_close()) {
-    //    poll_events();
-    //}
+    auto key_listener = window.key_emitter()->hook([](auto current, auto previous){
+    }); 
 
     return 0;
 }
