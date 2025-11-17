@@ -25,7 +25,6 @@ struct Window {
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
 
     bool should_close();
-    void poll_events();
     void get_mouse_pos(double& x, double& y);
 
     void set_mouse_move(std::function<void(double, double)>);
