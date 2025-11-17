@@ -44,7 +44,6 @@ struct Window {
 
     GLFWwindow* impl() const;
     ~Window();
-    void setFrameVisible(bool value);
 
     operator bool() const;
 

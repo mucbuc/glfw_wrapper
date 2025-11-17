@@ -22,6 +22,7 @@ int main()
     window.emit_touch_event();
     ASSERT(touch_event_emitted);
 
+#if 0
     auto key_listener = window.key_emitter()->hook([window](auto current, auto previous) mutable {
         if (current == "a")
         {
@@ -36,10 +37,11 @@ int main()
         }
     });
 
-    // while (!window.should_close())
-    // {
-    //     poll_events();
-    // }
+    while (!window.should_close())
+    {
+        poll_events();
+    }
+#endif 
 
     return 0;
 }

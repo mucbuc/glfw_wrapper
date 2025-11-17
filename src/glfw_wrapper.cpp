@@ -90,11 +90,6 @@ struct Window::Pimpl {
         m_current_key = key;
     }
 
-    void setFrameVisible(bool value)
-    {
-        glfwWindowHint(GLFW_DECORATED, value ? GLFW_TRUE : GLFW_FALSE);
-    }
-
     void set_window_resize(std::function<void(double, double)> cb)
     {
         m_on_window_resize = cb;
@@ -290,11 +285,6 @@ void Window::emit_touch_event()
 auto Window::key_emitter() -> key_emitter_type
 {
     return m_pimpl->key_emitter();
-}
-
-void Window::setFrameVisible(bool value)
-{
-    m_pimpl->setFrameVisible(value);
 }
 
 void Window::set_window_resize(std::function<void(double, double)> cb)
