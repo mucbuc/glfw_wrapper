@@ -59,7 +59,7 @@ struct Window::Pimpl {
 
         glfwSetWindowSizeCallback(m_window.get(), &window_size_callback); 
     
-        m_mouse_batch = om636::control::make_queue<touch_state, touch_state>();
+        m_touch_emitter = om636::control::make_queue<touch_state, touch_state>();
     }
 
     bool should_close()
@@ -67,9 +67,9 @@ struct Window::Pimpl {
         return glfwWindowShouldClose(impl());
     }
 
-    Window::mouse_event_batch mouse_events()
+    Window::touch_emitter_type touch_emitter()
     {
-        return m_mouse_batch;
+        return m_touch_emitter;
     }
 
     void setFrameVisible(bool value)
@@ -77,9 +77,9 @@ struct Window::Pimpl {
         glfwWindowHint(GLFW_DECORATED, value ? GLFW_TRUE : GLFW_FALSE);
     }
 
-    void invoke_mouse_event()
+    void emit_touch_event()
     {
-        m_mouse_batch->invoke(m_current_touch, m_previous_touch);
+        m_touch_emitter->invoke(m_current_touch, m_previous_touch);
     }
 
     void set_window_resize(std::function<void(double, double)> cb)
@@ -166,7 +166,7 @@ struct Window::Pimpl {
             }
         }
 
-        pimpl->m_mouse_batch->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
+        pimpl->m_touch_emitter->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
         pimpl->m_previous_touch = pimpl->m_current_touch;
     }
 
@@ -215,7 +215,7 @@ struct Window::Pimpl {
         pimpl->m_current_touch.m_position.x = xpos;
         pimpl->m_current_touch.m_position.y = ypos;
         
-        pimpl->m_mouse_batch->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
+        pimpl->m_touch_emitter->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
         pimpl->m_previous_touch = pimpl->m_current_touch;
     }
 
@@ -241,7 +241,7 @@ struct Window::Pimpl {
     std::function<void(double, double)> m_on_window_resize;
     std::function<void(double, double)> m_on_scroll;
     std::function<void(string)> m_on_key_press;
-    Window::mouse_event_batch m_mouse_batch;
+    Window::touch_emitter_type m_touch_emitter;
 };
 
 Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title)
@@ -281,9 +281,9 @@ bool Window::should_close()
     return glfwWindowShouldClose(impl());
 }
 
-auto Window::mouse_events() -> mouse_event_batch
+auto Window::touch_emitter() -> touch_emitter_type
 {
-    return m_pimpl->mouse_events();
+    return m_pimpl->touch_emitter();
 }
 
 void Window::setFrameVisible(bool value)
@@ -291,9 +291,9 @@ void Window::setFrameVisible(bool value)
     m_pimpl->setFrameVisible(value);
 }
 
-void Window::invoke_mouse_event()
+void Window::emit_touch_event()
 {
-    m_pimpl->invoke_mouse_event();
+    m_pimpl->emit_touch_event();
 }
 
 void Window::set_window_resize(std::function<void(double, double)> cb)

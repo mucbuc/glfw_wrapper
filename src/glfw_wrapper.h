@@ -28,10 +28,11 @@ struct Window {
 
     bool should_close();
 
-    using mouse_event_batch = std::shared_ptr<om636::control::Batch<touch_state, touch_state>>;
-    mouse_event_batch mouse_events();
+    using touch_emitter_type = std::shared_ptr<om636::control::Batch<touch_state, touch_state>>;
+    touch_emitter_type touch_emitter();
 
-    void invoke_mouse_event();
+    // this is to retrieve current touch position before touch events have been emitted
+    void emit_touch_event();
 
     void set_window_resize(std::function<void(double, double)>);
     void set_window_scroll(std::function<void(double, double)>);

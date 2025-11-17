@@ -13,10 +13,10 @@ int main()
 
     ASSERT(window.impl());
 
-    bool mouse_event_invoked = false;
-    auto l = window.mouse_events()->hook([& mouse_event_invoked](auto current, auto previous){
+    bool touch_event_emitted = false;
+    auto l = window.touch_emitter()->hook([& touch_event_emitted](auto current, auto previous){
     
-        mouse_event_invoked = true; 
+        touch_event_emitted = true; 
 
         // if (!current.m_is_down && previous.m_is_down)
         // {
@@ -26,9 +26,9 @@ int main()
         // std::cout << current.m_position.x << " " << current.m_position.y << std::endl;
     }); 
 
-    ASSERT(!mouse_event_invoked);
-    window.invoke_mouse_event();
-    ASSERT(mouse_event_invoked);
+    ASSERT(!touch_event_emitted);
+    window.emit_touch_event();
+    ASSERT(touch_event_emitted);
 
     //while (!window.should_close()) {
     //    poll_events();
