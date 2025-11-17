@@ -21,8 +21,25 @@ jobs:
           cmake -B build
           cmake --build build
 
-      - name: Test fails
+      - name: Run Test
         run: |
           cd test
           ctest --test-dir build
 
+  test-emscripten:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mymindstorm/setup-emsdk@v14
+
+      - name: Build
+        run: |
+          cd test
+          emcmake cmake -B web-build
+          cmake --build web-build
+
+      - name: Run Test
+        run: |
+          cd test
+          ctest --test-dir web-build
