@@ -23,6 +23,7 @@ struct Window {
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
 
     bool should_close();
+    void close(); 
 
     using touch_emitter_type = std::shared_ptr<om636::control::Batch<touch_state, touch_state>>;
     touch_emitter_type touch_emitter();

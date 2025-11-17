@@ -38,7 +38,6 @@ void poll_events()
 }
 
 struct Window::Pimpl {
-
     template <class T>
     Pimpl(T w)
         : m_window(std::move(w))
@@ -62,11 +61,6 @@ struct Window::Pimpl {
         m_touch_emitter = om636::control::make_queue<touch_state, touch_state>();
     
         m_key_emitter = om636::control::make_queue<std::string, std::string>();
-    }
-
-    bool should_close()
-    {
-        return glfwWindowShouldClose(impl());
     }
 
     Window::touch_emitter_type touch_emitter()
@@ -238,6 +232,7 @@ struct Window::Pimpl {
     std::function<void(double, double)> m_on_scroll;
     Window::touch_emitter_type m_touch_emitter;
     Window::key_emitter_type m_key_emitter;
+    std::atomic<bool> m_closed = false;
 };
 
 Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title)
@@ -275,6 +270,11 @@ Window::~Window() = default;
 bool Window::should_close()
 {
     return glfwWindowShouldClose(impl());
+}
+
+void Window::close()
+{
+    glfwSetWindowShouldClose(impl(), true);
 }
 
 auto Window::touch_emitter() -> touch_emitter_type
@@ -329,6 +329,7 @@ void Window::set_window_pos(int left, int top)
 
 GLFWwindow* Window::impl() const
 {
+    ASSERT(!m_pimpl->m_closed);
     return m_pimpl->m_window.get();
 }
 
