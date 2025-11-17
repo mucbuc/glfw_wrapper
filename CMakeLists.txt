@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27)
 
 project(glfw_wrapper)
 
-add_library(glfw_wrapper STATIC src/glfw_wrapper.h)
+add_library(glfw_wrapper STATIC src/glfw_wrapper.hpp)
 
 set_target_properties(glfw_wrapper PROPERTIES
     CXX_STANDARD 20

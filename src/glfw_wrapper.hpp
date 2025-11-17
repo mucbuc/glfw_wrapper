@@ -45,7 +45,7 @@ struct Window {
     GLFWwindow* impl() const;
     ~Window();
 
-    operator bool() const;
+    bool is_valid() const;
 
 private:
     struct Pimpl;

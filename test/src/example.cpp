@@ -1,6 +1,6 @@
 #include <iostream>
 #include <lib/asserter/src/test.hpp>
-#include <lib/glfw_wrapper/src/glfw_wrapper.h>
+#include <lib/glfw_wrapper/src/glfw_wrapper.hpp>
 
 int main()
 {
@@ -12,6 +12,7 @@ int main()
     auto window = Window::make_window(500, 300, false, true, "test");
 
     ASSERT(window.impl());
+    ASSERT(window.is_valid());
 
     bool touch_event_emitted = false;
     auto touch_listener = window.touch_emitter()->hook([& touch_event_emitted](auto current, auto previous){
