@@ -36,10 +36,10 @@ int main()
         }
     });
 
-    while (!window.should_close())
-    {
-        poll_events();
-    }
+    // while (!window.should_close())
+    // {
+    //     poll_events();
+    // }
 
     return 0;
 }
