@@ -48,8 +48,8 @@ struct Window::Pimpl {
         double x;
         double y; 
         glfwGetCursorPos(m_window.get(), &x, &y);
-        m_current_mouse_button.m_position = vec2f { float(x), float(y) };
-        m_previous_mouse_button.m_position = m_current_mouse_button.m_position;
+        m_current_touch.m_position = vec2f { float(x), float(y) };
+        m_previous_touch.m_position = m_current_touch.m_position;
 
         glfwSetMouseButtonCallback(m_window.get(), &mouse_button_callback);
         glfwSetCursorPosCallback(m_window.get(), &handle_mouse_move);
@@ -59,7 +59,7 @@ struct Window::Pimpl {
 
         glfwSetWindowSizeCallback(m_window.get(), &window_size_callback); 
     
-        m_mouse_batch = om636::control::make_queue<mouse_button_state, mouse_button_state>();
+        m_mouse_batch = om636::control::make_queue<touch_state, touch_state>();
     }
 
     bool should_close()
@@ -79,7 +79,7 @@ struct Window::Pimpl {
 
     void invoke_mouse_event()
     {
-        m_mouse_batch->invoke(m_current_mouse_button, m_previous_mouse_button);
+        m_mouse_batch->invoke(m_current_touch, m_previous_touch);
     }
 
     void set_window_resize(std::function<void(double, double)> cb)
@@ -149,25 +149,25 @@ struct Window::Pimpl {
         if (action == GLFW_PRESS) {
             //                if (button == GLFW_MOUSE_BUTTON_RIGHT)
             //                {
-            //                    pimpl->m_current_mouse_button.m_right_button_down = true;
+            //                    pimpl->m_current_touch.m_right_button_down = true;
             //                }
             //                else
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
-                pimpl->m_current_mouse_button.m_left_button_down = true;
+                pimpl->m_current_touch.m_is_down = true;
             }
         } else if (action == GLFW_RELEASE) {
             //                if (button == GLFW_MOUSE_BUTTON_RIGHT)
             //                {
-            //                    pimpl->m_current_mouse_button.m_right_button_down = false;
+            //                    pimpl->m_current_touch.m_right_button_down = false;
             //                }
             //                else
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
-                pimpl->m_current_mouse_button.m_left_button_down = false;
+                pimpl->m_current_touch.m_is_down = false;
             }
         }
 
-        pimpl->m_mouse_batch->invoke(pimpl->m_current_mouse_button, pimpl->m_previous_mouse_button);
-        pimpl->m_previous_mouse_button = pimpl->m_current_mouse_button;
+        pimpl->m_mouse_batch->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
+        pimpl->m_previous_touch = pimpl->m_current_touch;
     }
 
     static void char_callback(GLFWwindow* window, unsigned int codepoint)
@@ -212,11 +212,11 @@ struct Window::Pimpl {
     {
         auto pimpl = reinterpret_cast<glfw_wrapper::Window::Pimpl*>(glfwGetWindowUserPointer(window));
 
-        pimpl->m_current_mouse_button.m_position.x = xpos;
-        pimpl->m_current_mouse_button.m_position.y = ypos;
+        pimpl->m_current_touch.m_position.x = xpos;
+        pimpl->m_current_touch.m_position.y = ypos;
         
-        pimpl->m_mouse_batch->invoke(pimpl->m_current_mouse_button, pimpl->m_previous_mouse_button);
-        pimpl->m_previous_mouse_button = pimpl->m_current_mouse_button;
+        pimpl->m_mouse_batch->invoke(pimpl->m_current_touch, pimpl->m_previous_touch);
+        pimpl->m_previous_touch = pimpl->m_current_touch;
     }
 
     static void window_size_callback(GLFWwindow* window, int width, int height)
@@ -230,8 +230,8 @@ struct Window::Pimpl {
 
     unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> m_window;
 
-    mouse_button_state m_current_mouse_button = { false, { 0, 0 } };
-    mouse_button_state m_previous_mouse_button = { false, { 0, 0 } };
+    touch_state m_current_touch = { false, { 0, 0 } };
+    touch_state m_previous_touch = { false, { 0, 0 } };
 
     keyboard_state m_current_keyboard_state;
     keyboard_state m_previous_keyboard_state;

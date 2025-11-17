@@ -18,7 +18,7 @@ int main()
     
         mouse_event_invoked = true; 
 
-        // if (!current.m_left_button_down && previous.m_left_button_down)
+        // if (!current.m_is_down && previous.m_is_down)
         // {
         //     std::cout << "touch up" << std::endl;
         // }

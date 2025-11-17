@@ -13,8 +13,8 @@ struct vec2f {
     float y;
 };
 
-struct mouse_button_state {
-    bool m_left_button_down; // mac mouse doesn't have right button, better for touch screen anyway
+struct touch_state {
+    bool m_is_down;
     vec2f m_position;
 };
 
@@ -28,7 +28,7 @@ struct Window {
 
     bool should_close();
 
-    using mouse_event_batch = std::shared_ptr<om636::control::Batch<mouse_button_state, mouse_button_state>>;
+    using mouse_event_batch = std::shared_ptr<om636::control::Batch<touch_state, touch_state>>;
     mouse_event_batch mouse_events();
 
     void invoke_mouse_event();
