@@ -57,6 +57,5 @@ private:
 bool init_glfw(std::ostream&);
 void poll_events();
 void terminate();
-void start_main_loop(std::function<void(std::function<void()>)>);
 
 }
