@@ -15,16 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build and Test
         run: |
           cd test
-          cmake -B build
-          cmake --build build
-
-      - name: Run Test
-        run: |
-          cd test
-          ctest --test-dir build
+          ./build_and_run
 
   test-emscripten:
     runs-on: macos-latest
@@ -33,13 +27,7 @@ jobs:
 
       - uses: mymindstorm/setup-emsdk@v14
 
-      - name: Build
+      - name: Build and Test
         run: |
           cd test
-          emcmake cmake -B web-build
-          cmake --build web-build
-
-      - name: Run Test
-        run: |
-          cd test
-          ctest --test-dir web-build
+          ./em_build_and_run
