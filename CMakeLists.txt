@@ -14,11 +14,13 @@ set_target_properties(glfw_wrapper PROPERTIES
 target_sources(glfw_wrapper PRIVATE 
     src/glfw_wrapper.cpp)
 
+if (!EMSCRIPTEN)
 add_subdirectory(lib/glfw)
 
 target_link_libraries(glfw_wrapper PRIVATE
     glfw
 )
+endif()
 
 target_include_directories(glfw_wrapper SYSTEM PUBLIC       
     ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
