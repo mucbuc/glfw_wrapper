@@ -14,6 +14,7 @@ set_target_properties(Example PROPERTIES
 )
 
 add_subdirectory(lib/glfw_wrapper)
+add_subdirectory(lib/asserter)
 
 target_link_libraries(Example PRIVATE 
   glfw_wrapper

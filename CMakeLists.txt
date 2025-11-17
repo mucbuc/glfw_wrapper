@@ -15,7 +15,6 @@ target_sources(glfw_wrapper PRIVATE
     src/glfw_wrapper.cpp)
 
 add_subdirectory(lib/glfw)
-add_subdirectory(lib/asserter)
 
 target_link_libraries(glfw_wrapper PRIVATE
     glfw
@@ -24,4 +23,5 @@ target_link_libraries(glfw_wrapper PRIVATE
 target_include_directories(glfw_wrapper SYSTEM PUBLIC       
     ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_SOURCE_DIR}
 )
