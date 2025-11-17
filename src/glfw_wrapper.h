@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <lib/ohm/src/interface.hpp>
+#include <lib/dynamo/src/interface.hpp>
 
 struct GLFWwindow;
 namespace glfw_wrapper {
