@@ -228,6 +228,7 @@ Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque
         return Window { nullptr };
     }
 
+#ifndef __EMSCRIPTEN__
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     if (!opaque) {
@@ -236,11 +237,12 @@ Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque
     } else {
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
     }
-    glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, passThrough ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, passThrough ? GLFW_TRUE : GLFW_FALSE); 
 
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+#endif
 
     const auto name = string(title);
     GLFWwindow* raw_ptr = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);

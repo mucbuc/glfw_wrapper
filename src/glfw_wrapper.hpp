@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include <lib/dynamo/src/interface.hpp>
 

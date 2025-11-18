@@ -1,5 +1,6 @@
 test/build/
 .ignore_git
 test/result.json
+**/.DS_Store
 
-
+test/web-build/
