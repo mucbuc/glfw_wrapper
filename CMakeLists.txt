@@ -20,10 +20,13 @@ add_subdirectory(lib/glfw)
 target_link_libraries(glfw_wrapper PRIVATE
     glfw
 )
-endif()
 
 target_include_directories(glfw_wrapper SYSTEM PUBLIC       
     ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
+)
+endif()
+
+target_include_directories(glfw_wrapper SYSTEM PUBLIC       
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_SOURCE_DIR}
 )
