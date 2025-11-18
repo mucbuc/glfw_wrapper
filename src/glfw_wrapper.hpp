@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <string>
 #include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <lib/dynamo/src/interface.hpp>
 
@@ -14,9 +14,15 @@ struct vec2f {
     float y;
 };
 
+struct vec2i {
+    int x;
+    int y;
+};
+
 struct touch_state {
-    bool m_is_down;
-    vec2f m_position;
+    bool is_down;
+    bool right_is_down;
+    vec2f position;
 };
 
 struct Window {
@@ -24,7 +30,7 @@ struct Window {
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
 
     bool should_close();
-    void close(); 
+    void close();
 
     using touch_emitter_type = std::shared_ptr<om636::control::Batch<touch_state, touch_state>>;
     touch_emitter_type touch_emitter();
@@ -34,14 +40,19 @@ struct Window {
 
     using key_emitter_type = std::shared_ptr<om636::control::Batch<std::string, std::string>>;
     key_emitter_type key_emitter();
+    bool is_valid_key(const std::string&);
+    std::vector<std::string> get_all_keys();
 
-    void set_window_resize(std::function<void(double, double)>);
-    void set_window_scroll(std::function<void(double, double)>);
+    using resize_emitter_type = std::shared_ptr<om636::control::Batch<vec2i, vec2i>>;
+    resize_emitter_type resize_emitter();
 
-    void get_window_pos(int& left, int& top);
-    void set_window_pos(int left, int top);
-    void get_window_size(int& width, int& height);
-    void get_framebuffer_size(int& width, int& height);
+    using scroll_emitter_type = std::shared_ptr<om636::control::Batch<vec2f, vec2f>>;
+    scroll_emitter_type scroll_emitter();
+
+    vec2i get_window_pos();
+    void set_window_pos(vec2i);
+    vec2i get_window_size();
+    vec2i get_framebuffer_size();
 
     GLFWwindow* impl() const;
     ~Window();
