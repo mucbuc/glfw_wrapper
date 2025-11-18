@@ -35,10 +35,12 @@ int main()
         std::cout << "resize: " << current.x << " " << current.y << " <- " << previous.x << " " << previous.y << std::endl;
     });
 
+#if 0
     while (!window.should_close())
     {
         poll_events();
     }
+#endif
 
     terminate();
 
