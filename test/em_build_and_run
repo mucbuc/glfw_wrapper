@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
 emcmake cmake -B web-build -DGLFW_BUILD_X11=0 -DGLFW_BUILD_WAYLAND=0
-cmake --build web-build &&
+cmake --build web-build
 emrun --browser chrome --browser_args="--headless=new" --kill_exit web-build/Example.html
