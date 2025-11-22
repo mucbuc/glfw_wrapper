@@ -1,6 +1,6 @@
 #include <iostream>
-#include <lib/asserter/src/test.hpp>
-#include <lib/glfw_wrapper/src/glfw_wrapper.hpp>
+#include <asserter/src/test.hpp>
+#include <glfw_wrapper/src/glfw_wrapper.hpp>
 
 int main()
 {

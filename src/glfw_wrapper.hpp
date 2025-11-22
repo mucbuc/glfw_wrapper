@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <lib/dynamo/src/interface.hpp>
+#include <dynamo/src/interface.hpp>
 
 struct GLFWwindow;
 namespace glfw_wrapper {

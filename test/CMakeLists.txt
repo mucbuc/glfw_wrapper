@@ -22,7 +22,7 @@ target_link_libraries(Example PRIVATE
   circuit
 )
 
-target_include_directories(Example SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(Example SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lib)
 
 if (EMSCRIPTEN)
     set_target_properties(Example PROPERTIES SUFFIX ".html")

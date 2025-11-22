@@ -1,7 +1,7 @@
 #include "glfw_wrapper.hpp"
 
-#include <lib/asserter/src/asserter.hpp>
-#include <lib/dynamo/src/impl/batch.hpp>
+#include <asserter/src/asserter.hpp>
+#include <dynamo/src/impl/batch.hpp>
 
 #include <GLFW/glfw3.h>
 #include <algorithm>

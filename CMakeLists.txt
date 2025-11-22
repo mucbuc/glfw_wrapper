@@ -27,6 +27,5 @@ target_include_directories(glfw_wrapper SYSTEM PUBLIC
 endif()
 
 target_include_directories(glfw_wrapper SYSTEM PUBLIC       
-    ${CMAKE_CURRENT_LIST_DIR}
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib
 )
