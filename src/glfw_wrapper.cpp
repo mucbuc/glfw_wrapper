@@ -323,13 +323,13 @@ auto Window::scroll_emitter() -> scroll_emitter_type
     return m_pimpl->scroll_emitter();
 }
 
-bool Window::is_valid_key(const std::string& key)
+bool Window::is_valid_key(const std::string& key) const
 {
     const auto& p = std::find(m_pimpl->m_all_keys.begin(), m_pimpl->m_all_keys.end(), key);
     return p != m_pimpl->m_all_keys.end();
 }
 
-std::vector<std::string> Window::get_all_keys()
+std::vector<std::string> Window::get_all_keys() const
 {
     return m_pimpl->m_all_keys;
 }

@@ -40,8 +40,8 @@ struct Window {
 
     using key_emitter_type = std::shared_ptr<om636::control::Batch<std::string, std::string>>;
     key_emitter_type key_emitter();
-    bool is_valid_key(const std::string&);
-    std::vector<std::string> get_all_keys();
+    bool is_valid_key(const std::string&) const;
+    std::vector<std::string> get_all_keys() const;
 
     using resize_emitter_type = std::shared_ptr<om636::control::Batch<vec2i, vec2i>>;
     resize_emitter_type resize_emitter();
