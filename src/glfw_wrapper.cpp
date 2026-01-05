@@ -274,6 +274,10 @@ Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+
+#else 
+    // prevent from context creation
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
     const auto name = string(title);

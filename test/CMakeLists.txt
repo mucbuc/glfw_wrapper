@@ -30,4 +30,6 @@ if (EMSCRIPTEN)
         -sUSE_GLFW=3
         --emrun
     )
+else()
+  add_subdirectory(lib/glfw_wrapper/lib/glfw)
 endif()

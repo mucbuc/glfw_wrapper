@@ -15,7 +15,6 @@ target_sources(glfw_wrapper PRIVATE
     src/glfw_wrapper.cpp)
 
 if (NOT EMSCRIPTEN)
-add_subdirectory(lib/glfw)
 
 target_link_libraries(glfw_wrapper PRIVATE
     glfw
