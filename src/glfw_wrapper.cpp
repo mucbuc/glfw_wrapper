@@ -285,6 +285,15 @@ Window Window::make_window(unsigned w, unsigned h, bool passThrough, bool opaque
     return make_shared<Window::Pimpl>(unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)>(raw_ptr, glfwDestroyWindow));
 }
 
+Window Window::make_fullscreen_window(std::string title)
+{
+    GLFWmonitor* primary = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primary);
+    const auto width = mode->width;
+    const auto height = mode->height;
+    return make_window(width, height, false, true, title);
+}
+
 Window::Window(shared_ptr<Pimpl> p)
     : m_pimpl(p)
 {

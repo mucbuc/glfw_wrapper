@@ -29,6 +29,8 @@ struct Window {
     Window() = default;
     static Window make_window(unsigned w, unsigned h, bool passThrough, bool opaque, std::string title);
 
+    static Window make_fullscreen_window(std::string title);
+
     bool should_close();
     void close();
 
