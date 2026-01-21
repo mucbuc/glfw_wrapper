@@ -1,0 +1,3 @@
+Remote: git@github.com:mucbuc/entry_point.git
+Commit: 4a3ad1f7f1db4df8873842ae860d4e1a02506dc9
+Branch: main
