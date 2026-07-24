@@ -24,7 +24,9 @@ if (NOT EMSCRIPTEN)
       ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
   )
 
-  add_subdirectory(lib/glfw)
+  if (NOT TARGET glfw)
+    add_subdirectory(lib/glfw)
+  endif()
 else()
   target_compile_options(glfw_wrapper PRIVATE --use-port=contrib.glfw3)
 endif()
