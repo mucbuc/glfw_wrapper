@@ -27,9 +27,7 @@ target_include_directories(Example SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lib)
 if (EMSCRIPTEN)
     set_target_properties(Example PROPERTIES SUFFIX ".html")
     target_link_options(Example PRIVATE 
-        -sUSE_GLFW=3
-        --emrun
+      --use-port=contrib.glfw3
+      --emrun
     )
-else()
-  add_subdirectory(lib/glfw_wrapper/lib/glfw)
 endif()

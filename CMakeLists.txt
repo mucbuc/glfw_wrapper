@@ -16,13 +16,17 @@ target_sources(glfw_wrapper PRIVATE
 
 if (NOT EMSCRIPTEN)
 
-target_link_libraries(glfw_wrapper PRIVATE
-    glfw
-)
+  target_link_libraries(glfw_wrapper PRIVATE
+     glfw
+  )
 
-target_include_directories(glfw_wrapper SYSTEM PUBLIC       
-    ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
-)
+  target_include_directories(glfw_wrapper SYSTEM PUBLIC       
+      ${CMAKE_CURRENT_LIST_DIR}/lib/glfw/include
+  )
+
+  add_subdirectory(lib/glfw)
+else()
+  target_compile_options(glfw_wrapper PRIVATE --use-port=contrib.glfw3)
 endif()
 
 target_include_directories(glfw_wrapper SYSTEM PUBLIC       
